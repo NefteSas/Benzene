@@ -3,6 +3,6 @@
 #include <iostream>
 
 int main(){
-    element foo = element("GOIDA", 25);
+    element foo = element(25);
     return 0;
 }

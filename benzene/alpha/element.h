@@ -1,10 +1,29 @@
+#pragma once
+
+class electronic_configuration
+{
+    private:
+        int _charge;
+        int *pointer_to_array = nullptr;
+    public:
+        electronic_configuration(const int charge);
+
+        
+
+        //де факто нас интересует только последняя орбиталь
+
+        
+};
+
 class element
 {
 private:
-    char _id[MAX_ELEMENT_LENGH];
-    
-    __int8 _charge;
+    int _charge;
+    electronic_configuration _electronic_configuration;
 public:
-    char *get_char_id();
-    element(const char id[], const __int8 charge);
+    element(const int charge);    
+    electronic_configuration get_electronic_configuration();
 };
+
+
+

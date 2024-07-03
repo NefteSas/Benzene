@@ -11,7 +11,7 @@ file(GLOB AlphaDefenitions "benzene/alpha/*.h")
 
 include_directories(benzene benzene/alpha)
 
-add_compile_definitions(MAX_ELEMENT_LENGH=${MAX_ELEMENT_ID_LENGH})
+#add_compile_definitions(MAX_ELEMENT_LENGH=${MAX_ELEMENT_ID_LENGH})
 
 add_library(Benzene SHARED ${AlphaSources} ${AlphaDefenitions})
 set_target_properties(Benzene PROPERTIES PREFIX "")
