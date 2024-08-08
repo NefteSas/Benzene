@@ -1,15 +1,32 @@
 #pragma once
-
+#include <vector>
+#include <string>
 class electronic_configuration
 {
+
+
+
     private:
         int _charge;
         int *pointer_to_array = nullptr;
+
+        //0 - s, 1 - p, 2 - d, 3 - f
+        std::vector<std::vector<int>> _electronic_configuration; //Последний энергетический уровень последовательность следующая: 0 - s; 1 - p; 2 - s`; 3 - d;
     public:
-        electronic_configuration(const int charge);
+        enum ENERGY_LEVEL{
+            S_LEVEL,
+            P_LEVEL,
+            D_LEVEL,
+            F_LEVEL
+        };
 
         
+        
+        electronic_configuration(const int charge);
+        static std::vector<std::vector<int>> generate_configuration_stupid_method(int *aviable_electrons);
+        static std::vector<int> generate_orbit(electronic_configuration::ENERGY_LEVEL orbit_type, int *electrons);
 
+        operator std::string();
         //де факто нас интересует только последняя орбиталь
 
         

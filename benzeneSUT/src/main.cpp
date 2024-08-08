@@ -1,8 +1,16 @@
-#include <element.h>
-
+#include <alpha/element.h>
+#include <logger.h>
 #include <iostream>
 
 int main(){
-    element foo = element(25);
+
+    int n;
+
+    std::cin >> n;
+
+    element foo = element(n);
+
+    logger::make_message(foo.get_electronic_configuration(), MSG_TYPE::INFO);
+
     return 0;
 }
