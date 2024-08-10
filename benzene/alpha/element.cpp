@@ -1,6 +1,7 @@
 #include <iostream>
 #include <alpha/element.h>
 #include <logger.h>
+#include <cmath>
 #include <numeric>
 
 electronic_configuration::electronic_configuration(const int charge){
@@ -15,7 +16,8 @@ electronic_configuration::electronic_configuration(const int charge){
     int ostatok_before_end{charge};
     int period{1};
 
-    _electronic_configuration = electronic_configuration::generate_configuration_stupid_method(&cash_charge);
+    logger::make_message("Element generation process has started. Charge number: " + std::to_string(charge), MSG_TYPE::INFO);
+    _electronic_configuration = electronic_configuration::generate_configuration_stupid_method(cash_charge);
 
 }
 
@@ -67,14 +69,15 @@ electronic_configuration element::get_electronic_configuration() {
 
 
 
-std::vector<std::vector<int>> electronic_configuration::generate_configuration_stupid_method(int *aviable_electrons){
+std::vector<std::vector<int>> electronic_configuration::generate_configuration_stupid_method(int aviable_electrons){
     std::vector<std::vector<int>> result = std::vector<std::vector<int>>{};
 
     int nal = 0;
-    int cash{*aviable_electrons};
-
+    int cash = aviable_electrons;
     while (cash > 0)
     {
+
+        logger::make_message("Generating element with charge " + std::to_string(aviable_electrons) + " | " + std::to_string((1 - (float(cash) / float(aviable_electrons))) * 100) + "%", MSG_TYPE::INFO);
 
         nal++;
 
@@ -83,16 +86,20 @@ std::vector<std::vector<int>> electronic_configuration::generate_configuration_s
         for (n = 0; n <= nal; n++){
             l = nal - n;
 
+            
+
             if (l >= n) {
                 continue;
             }
-
             
+            float k = 100 - std::round((float(cash) / float(aviable_electrons) * 100.0));
 
+            std::vector<int> z;
             switch (l)
             {
             case 0:
-                result.emplace_back(electronic_configuration::generate_orbit(ENERGY_LEVEL::S_LEVEL, &cash));
+                z = electronic_configuration::generate_orbit(ENERGY_LEVEL::S_LEVEL, &cash);
+                result.emplace_back(z);
                 break;
             case 1:
                 result.emplace_back(electronic_configuration::generate_orbit(ENERGY_LEVEL::P_LEVEL, &cash));
@@ -111,22 +118,67 @@ std::vector<std::vector<int>> electronic_configuration::generate_configuration_s
                 break;
             }  
         }
-        
-
-
-        
     }
     
+    //теперь фильтруем
+
+    std::vector<std::vector<int>>::iterator result_iterator;
+    std::vector<std::vector<int>>::iterator next_iterator;
+    std::vector<int> vector_buffer;
+    std::vector<int> vector_buffer2;
+    int buffer;
+    int buffer2;
+    logger::make_message("Filtering element with charge " + std::to_string(aviable_electrons), MSG_TYPE::INFO);
+    for (result_iterator = result.begin(); result_iterator < result.end(); result_iterator++)
+    {
+        if (std::next(result_iterator) >= result.end()) {
+            continue;
+        }
+        next_iterator = std::next(result_iterator);
+        vector_buffer2 = *next_iterator;
+        vector_buffer2 = *result_iterator;
+        
+        // я знаю, что проблема может быть только с последней орбиталью, а так-же я знаю, что все проблемные элементы, являются d элементами, соответственно
+        if (vector_buffer.size() == 1 && vector_buffer2.size()==5) {
+            logger::make_message("HK", MSG_TYPE::INFO);
+            buffer = vector_buffer2.front();
+            buffer2 = std::accumulate(vector_buffer.begin(), vector_buffer.end(),0);
+
+            if (buffer2 + 2 == 10) {
+                //система может заполнить полностью уровень
+                buffer2+=2;
+                *result_iterator = std::vector<int>{0};
+            } else {
+                if (buffer2 != 10) {
+                    *result_iterator = std::vector<int>{1};
+                    buffer2++;
+                }
+            }
+            
+            
+            *(next_iterator) = electronic_configuration::generate_orbit(ENERGY_LEVEL::D_LEVEL, &buffer2);
+            
+
+            
+
+        } else {
+            continue;
+        }
+    }
+    logger::make_message("Gen ended", MSG_TYPE::INFO);
+
+
     return result;
 
 }
 
 std::vector<int> electronic_configuration::generate_orbit(electronic_configuration::ENERGY_LEVEL orbit_type, int *electrons){
     std::vector<int> result;
+    float start_el = (float)*electrons;
     bool by_two = false;
     float max_full_orbits = 0;
 
-    logger::make_message("Создаю орбиталь. Остаток:" + std::to_string(*electrons) + "Тип: " + std::to_string(orbit_type) , MSG_TYPE::INFO);
+    std::cout << *electrons;
 
     switch (orbit_type)
     {
@@ -134,7 +186,8 @@ std::vector<int> electronic_configuration::generate_orbit(electronic_configurati
         if (*electrons >= 2) {
             result = std::vector<int>{2};
         } else {
-            result = std::vector<int>{*electrons};
+            result = std::vector<int>{1};
+
         }
         *electrons -= 2;
         return result;

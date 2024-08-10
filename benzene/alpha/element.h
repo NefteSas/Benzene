@@ -23,7 +23,7 @@ class electronic_configuration
         
         
         electronic_configuration(const int charge);
-        static std::vector<std::vector<int>> generate_configuration_stupid_method(int *aviable_electrons);
+        static std::vector<std::vector<int>> generate_configuration_stupid_method(int aviable_electrons);
         static std::vector<int> generate_orbit(electronic_configuration::ENERGY_LEVEL orbit_type, int *electrons);
 
         operator std::string();
