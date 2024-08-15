@@ -88,7 +88,8 @@ std::vector<std::vector<int>> electronic_configuration::generate_configuration_s
 
     int nal = 0;
     int cash = aviable_electrons;
-    
+    int p = 1;
+    bool for_one = false;
     while (cash > 0)
     {
 
@@ -98,6 +99,8 @@ std::vector<std::vector<int>> electronic_configuration::generate_configuration_s
 
         int n = 0;
         int l = 0; 
+
+
         for (n = 0; n <= nal; n++){
             l = nal - n;
 
@@ -112,12 +115,17 @@ std::vector<std::vector<int>> electronic_configuration::generate_configuration_s
             switch (l)
             {
             case 0:
+                p++;
                 result.emplace_back(electronic_configuration::generate_orbit(ENERGY_LEVEL::S_LEVEL, &cash));
                 break;
             case 1:
                 result.emplace_back(electronic_configuration::generate_orbit(ENERGY_LEVEL::P_LEVEL, &cash));
                 break;
             case 2:
+                if (p >= 7) {
+                    result.emplace_back(electronic_configuration::generate_orbit(ENERGY_LEVEL::P_LEVEL, &cash));
+                    break;
+                }
                 result.emplace_back(electronic_configuration::generate_orbit(ENERGY_LEVEL::D_LEVEL, &cash));
                 break;
             case 3:
@@ -137,10 +145,11 @@ std::vector<std::vector<int>> electronic_configuration::generate_configuration_s
     int len;
     std::vector<std::vector<int>>::iterator orbit_buffer;
     std::vector<std::vector<int>>::iterator orbit_buffer_neded_iter;
-    for(std::vector<std::vector<int>>::iterator i = result.begin(); i < result.end(); i++) {
+    for(std::vector<std::vector<int>>::iterator i = result.end(); i > result.begin(); i--) {
 
         if ((*i).size() == 1) {
             last_s_iterator = i;
+            break;
         }
 
     }
@@ -156,7 +165,7 @@ std::vector<std::vector<int>> electronic_configuration::generate_configuration_s
                 (*orbit_buffer)[len]++;
             } else if ((*orbit_buffer).size() < len < ((*orbit_buffer).size() * 2))
             {   
-                if ((len + (*last_s_iterator).front()) == ((*orbit_buffer).size() * 2)) { 
+                if (((len + (*last_s_iterator).front()) == ((*orbit_buffer).size() * 2)) && p < 6) { 
 
                     (*orbit_buffer) = std::vector<int>((*orbit_buffer).size(), 2);
                     (*last_s_iterator).front() = 0;
