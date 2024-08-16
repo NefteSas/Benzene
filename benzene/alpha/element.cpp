@@ -122,7 +122,7 @@ std::vector<std::vector<int>> electronic_configuration::generate_configuration_s
                 result.emplace_back(electronic_configuration::generate_orbit(ENERGY_LEVEL::P_LEVEL, &cash));
                 break;
             case 2:
-                if (p >= 7) {
+                if (aviable_electrons == 103 && p == 8) {
                     result.emplace_back(electronic_configuration::generate_orbit(ENERGY_LEVEL::P_LEVEL, &cash));
                     break;
                 }
@@ -145,7 +145,7 @@ std::vector<std::vector<int>> electronic_configuration::generate_configuration_s
     int len;
     std::vector<std::vector<int>>::iterator orbit_buffer;
     std::vector<std::vector<int>>::iterator orbit_buffer_neded_iter;
-    for(std::vector<std::vector<int>>::iterator i = result.end(); i > result.begin(); i--) {
+    for(std::vector<std::vector<int>>::iterator i = result.end(); i >= result.begin(); i--) {
 
         if ((*i).size() == 1) {
             last_s_iterator = i;
@@ -163,18 +163,23 @@ std::vector<std::vector<int>> electronic_configuration::generate_configuration_s
 
             if (len < (*orbit_buffer).size()) {
                 (*orbit_buffer)[len]++;
-            } else if ((*orbit_buffer).size() < len < ((*orbit_buffer).size() * 2))
+                (*last_s_iterator).front()--;
+            } 
+            else 
             {   
-                if (((len + (*last_s_iterator).front()) == ((*orbit_buffer).size() * 2)) && p < 6) { 
+                if ((*orbit_buffer).size() < len && len < ((*orbit_buffer).size() * 2)) {
+                    if (((len + (*last_s_iterator).front()) == ((*orbit_buffer).size() * 2)) && p <= 6) { 
 
-                    (*orbit_buffer) = std::vector<int>((*orbit_buffer).size(), 2);
-                    (*last_s_iterator).front() = 0;
-                    break;
-                 }
+                        (*orbit_buffer) = std::vector<int>((*orbit_buffer).size(), 2);
+                        (*last_s_iterator).front() = 0;
+                        break;
+                    }
                 (*orbit_buffer)[(len-5)]++;
+                (*last_s_iterator).front()--;
+                }
             }
         
-            (*last_s_iterator).front()--;
+            
         }
     }
 
