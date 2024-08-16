@@ -3,21 +3,13 @@
 #include <iostream>
 
 int main(){
-    std::cout << "Gen from ";
-    int a;
-    int b;
-    std::cin >> a;
-    std::cout << "To ";
-    std::cin >> b;
-
-    element foo = element(a);
-    for (int i = a + a; i < b; i++) {
-        foo = element(i);
-        logger::make_message(foo.get_electronic_configuration(), MSG_TYPE::INFO);
+    int start = 10;
+    while (true) {
+        std::cin >> start;
+        element foo = element(start);
+        logger::make_message(electronic_configuration::to_string(foo.get_electronic_configuration().get_orbits()), MSG_TYPE::INFO);
     }
-    
-    
-    int k;
-    std::cin >> k;
+        
+
     return 0;
 }
